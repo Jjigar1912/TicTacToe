@@ -1,9 +1,11 @@
 var sign = "X";
+var audio;
 const button = document.querySelectorAll(".button");
 const reset = document.querySelector("#reset");
 const turn = document.querySelector("#turn");
 var xMove = [];
 var yMove = [];
+const status1 = document.getElementById("status");
 const winMove = [
   [
     [0, 0],
@@ -46,6 +48,8 @@ const winMove = [
     [1, 2],
   ],
 ];
+var flag = 0;
+var count = 0;
 reset.addEventListener("click", () => {
   for (let i = 0; i < button.length; i++) {
     for (let j = 0; j < button[i].children.length; j++) {
@@ -55,17 +59,20 @@ reset.addEventListener("click", () => {
       button[i].children[j].children[0].disabled = false;
       sign = "X";
       turn.innerHTML = "";
-
       xMove = [];
       yMove = [];
+      count = 0;
+      flag = 0;
+      document.getElementById("status").innerHTML = "";
     }
   }
 });
 for (let i = 0; i < button.length; i++) {
   for (let j = 0; j < button[i].children.length; j++) {
     button[i].children[j].addEventListener("click", (e) => {
-      let audio = new Audio("audioEffect.mpeg");
+      audio = new Audio("audioEffect.mpeg");
       audio.play();
+      count++;
       turn.innerHTML = `Player ${sign === "X" ? "O" : "X"}'s turn `;
       turn.style.paddingBlock = "10px";
       turn.style.color = "white";
@@ -99,8 +106,16 @@ for (let i = 0; i < button.length; i++) {
             if (
               threeArray[i].sort().toString() == winMove[j].sort().toString()
             ) {
-              alert(`${sign === "X" ? "O" : "X"} Win`);
-
+              flag = 1;
+              turn.innerHTML = "";
+              status1.innerHTML = `Player ${sign === "X" ? "O" : "X"} Win`;
+              audio = new Audio("WinSound.mpeg");
+              audio.play();
+              for (let i = 0; i < button.length; i++) {
+                for (let j = 0; j < button[i].children.length; j++) {
+                  button[i].children[j].children[0].disabled = true;
+                }
+              }
               xMove = [];
               yMove = [];
             }
@@ -124,10 +139,22 @@ for (let i = 0; i < button.length; i++) {
             ) {
               xMove = [];
               yMove = [];
-              alert(`${sign === "X" ? "O" : "X"} Win`);
+              status1.innerHTML = `Player ${sign === "X" ? "O" : "X"} Win`;
+              turn.innerHTML = "";
+              audio = new Audio("WinSound.mpeg");
+              audio.play();
+              flag = 1;
+              for (let i = 0; i < button.length; i++) {
+                for (let j = 0; j < button[i].children.length; j++) {
+                  button[i].children[j].children[0].disabled = true;
+                }
+              }
             }
           }
         }
+      }
+      if (count == 9 && flag == 0) {
+        status1.innerHTML = "Game is Draw";
       }
     });
   }
